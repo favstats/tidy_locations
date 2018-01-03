@@ -1,0 +1,46 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+##### load packages
+
+```{r}
+pacman::p_load(ggmap, jsonlite, tidyverse, lubridate)
+```
+
+
+##### 1. Read output from google takeout
+## get your location history from https://takeout.google.com/settings/takeout
+```{r}
+loc_history <- fromJSON('data/Standortverlauf.json')
+```
+
+##### 2. Extract locations
+```{r}
+locations <- loc_history$locations #we are only interested in locations
+
+locations %<>% 
+ mutate(time = as_datetime(as.numeric(timestampMs) / 1000)) %>% 
+ mutate(lon = longitudeE7/1E7) %>% 
+ mutate(lat = latitudeE7/1E7) %>% 
+ select(time, lon, lat)
+ filter(time > as_datetime("2017-01-01 00:00:01") & time < as_datetime("2017-12-31 23:59:59"))
+
+```
+
+
+##### 3. Plot
+```{r}
+
+map1 <- "Stuttgart" %>% 
+  qmap(maptype = "toner", source = "stamen", zoom = 14) + # creates the map
+  geom_point(aes(x = lon, y = lat),                       # adding your data
+             size = 1,
+             data = locations,
+             color = "red", 
+             alpha = 0.01)
+
+ggsave(map1, file = "images/map1.png", height = 4, width = 4)
+```
+
