@@ -3,20 +3,23 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-##### load packages
+# load packages
 
 ```{r}
 pacman::p_load(ggmap, jsonlite, tidyverse, lubridate)
 ```
 
 
-##### 1. Read output from google takeout
+# 1. Read output from google takeout
+
 ## get your location history from https://takeout.google.com/settings/takeout
+
 ```{r}
 loc_history <- fromJSON('data/Standortverlauf.json')
 ```
 
-##### 2. Extract locations
+# 2. Extract locations
+
 ```{r}
 locations <- loc_history$locations #we are only interested in locations
 
@@ -30,7 +33,8 @@ locations %<>%
 ```
 
 
-##### 3. Plot
+# 3. Plot
+
 ```{r}
 
 map1 <- "Stuttgart" %>% 
